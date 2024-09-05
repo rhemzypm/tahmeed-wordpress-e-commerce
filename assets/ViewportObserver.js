@@ -420,33 +420,31 @@ var search= {
                 det_paket_pilihan;
               document.querySelector("#det_info_biro").innerHTML =
                 det_info_biro;
-              // Memeriksa apakah ada deskripsi
+
               let deskripsi = res[0].deskripsi
                 ? res[0].deskripsi
                 : "belum ada deskripsi";
 
-              // Jika deskripsi ada dan mengandung tanda "-"
+
               if (
                 deskripsi !== "belum ada deskripsi" &&
                 deskripsi.includes("-")
               ) {
-                // Memecah deskripsi berdasarkan simbol "-"
+ 
                 let deskripsiList = deskripsi.split("-");
 
-                // Buat list bullet point
+
                 let bulletPoints = "<ul>";
                 deskripsiList.forEach((item) => {
                   if (item.trim() !== "") {
-                    bulletPoints += `<li>${item.trim()}</li>`; // Tambahkan setiap item sebagai <li>
+                    bulletPoints += `<li>${item.trim()}</li>`; 
                   }
                 });
                 bulletPoints += "</ul>";
 
-                // Tampilkan list di dalam elemen HTML
                 document.querySelector("#det_deskripsi").innerHTML =
                   bulletPoints;
               } else {
-                // Jika tidak ada tanda "-", tampilkan teks biasa
                 document.querySelector("#det_deskripsi").innerHTML = deskripsi;
               }
 
