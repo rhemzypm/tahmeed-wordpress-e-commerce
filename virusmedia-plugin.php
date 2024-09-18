@@ -18,10 +18,19 @@ function get_products()
 	$search = "";
 	$sort = "";
 	$sortfrom = $_GET["sort_from"] ? $_GET["sort_from"] : "ASC";
+	$exclusive = [];
+	if(isset($_GET['ekslusif'])){
+		foreach(explode(",",$_GET['ekslusif']) as $key){
+			$_GET[trim($key)] = true;
+		}
+		
+// 		var_dump($exclusive);
+// 		exit();
+	}
 	// 	$search= $_GET["query"];
 
 	if ($_GET["query"]) {
-		$search .= " AND (a.nama_paket LIKE '%" . $_GET["query"] . "%' or a.maskapai LIKE '%" . $_GET['query'] . "%' or a.hotel_mekkah_name LIKE '%" . $_GET['query'] . "%' or a.hotel_madinah_name like '%" . $_GET['query'] . "%') ";
+		$search .= " AND (a.nama_paket LIKE '%" . $_GET["query"] . "%' or a.vendor LIKE '%" . $_GET["query"] . "%' or a.maskapai LIKE '%" . $_GET['query'] . "%' or a.hotel_mekkah_name LIKE '%" . $_GET['query'] . "%' or a.hotel_madinah_name like '%" . $_GET['query'] . "%') ";
 	}
 
 	if ($_GET["paket"]) {
@@ -82,13 +91,13 @@ function get_products()
 	// 		$search .= " AND a.sku_paket = '".$_GET["sku_paket"]."' ";
 	// 	}
 
-	if ($_GET["kereta_cepat"]) {
+	if ($_GET["kereta_cepat"] || $exclusive['kereta_cepat']) {
 		$search .= " AND a.kereta_cepat = " . $_GET["kereta_cepat"];
 	} else if (in_array("Kereta Cepat", explode(',', $_GET['ekslusif']))) {
 		$search .= " AND a.kereta_cepat = 1 ";
 	}
 	
-	if ($_GET["langsung"]) {
+	if ($_GET["langsung"] || $exclusive['langsung']) {
 		$search .= " AND a.langsung = " . $_GET["langsung"];
 	} else if (in_array("Langsung", explode(',', $_GET['ekslusif']))) {
 		$search .= " AND a.langsung = 1 ";
@@ -98,7 +107,7 @@ function get_products()
 		$sort .= " ORDER BY " . $_GET['sort_by'] . " " . $sortfrom;
 	}
 
-	if ($_GET["city_tour"]) {
+	if ($_GET["city_tour"] || $exclusive['city_tour']) {
 		if ($_GET["city_tour"] == 1) {
 			$search .= " AND (a.kota_wisata_umroh_plus !='' AND a.tipe = 'Umrah Plus') ";
 		} else {
@@ -108,7 +117,7 @@ function get_products()
 		$search .= " AND a.bonus_city_tour !='' ";
 	}
 
-	if ($_GET["ustadz_kol"]) {
+	if ($_GET["ustadz_kol"] || $exclusive['ustadz_kol']) {
 		if ($_GET["ustadz_kol"] == 1) {
 			$search .= " AND a.ustadz_kol !='' ";
 		} else {
@@ -202,7 +211,7 @@ function get_products()
 function get_detail_product()
 {
 	global $wpdb;
-	$sku_paket = $_GET["sku_paket"] ? $_GET["sku_paket"] : "AHS-UR001JA";
+	$sku_paket = $_GET["sku_paket"];
 
 	$query = "SELECT c.id as departureid, a.* , b.*,c.*,d.* FROM tahmeed_sku a LEFT JOIN tahmeed_sku_departure c ON a.id = c.sku_id LEFT JOIN tahmeed_sku_final b ON b.sku_departure_id = c.id  LEFT JOIN tahmeed_vendor d ON a.sku_paket LIKE CONCAT(d.vendor_code,'%') WHERE a.sku_paket = '" . $sku_paket . "' ORDER BY type DESC;";
 	// 	return $query;
@@ -564,7 +573,7 @@ function get_banners()
 {
 	global $wpdb;
 	$placement = $_GET['placement'];
-	$query = "SELECT * FROM tahmeed_banners WHERE placement = '" . $placement . "'";
+	$query = "SELECT * FROM tahmeed_banners WHERE placement = '" . $placement . "' and active = 1 order by title asc";
 	$banner = $wpdb->get_results($query);
 	return $banner;
 }

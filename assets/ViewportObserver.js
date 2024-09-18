@@ -80,7 +80,7 @@ var search= {
 			tmp.push("Bonus City Tour");
 		}
 		if(search.ustadz_kol !=""){ 
-			tmp.push("Ustadz KOL");
+			tmp.push("Dengan Ustadz");
 		}
 		if(search.langsung !=""){ 
 			tmp.push("Langsung");
@@ -853,7 +853,7 @@ function getCompare(skus){
 					try{
 						document.querySelector(selector).src = favImg
 					}catch(e){
-						console.log(e)
+// 						console.log(e)
 					}
 				}
 				
